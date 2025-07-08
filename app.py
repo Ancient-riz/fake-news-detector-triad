@@ -14,7 +14,7 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 
-    html, body, [class*="css"]  {
+    html, body, [class*="css"] {
         font-family: 'Orbitron', sans-serif;
         background-color: #0e1117;
         color: #f1f1f1;
@@ -31,12 +31,8 @@ st.markdown("""
     }
 
     @keyframes glow {
-        from {
-            text-shadow: 0 0 10px #00ffe1;
-        }
-        to {
-            text-shadow: 0 0 20px #0066ff;
-        }
+        from { text-shadow: 0 0 10px #00ffe1; }
+        to   { text-shadow: 0 0 20px #0066ff; }
     }
 
     .news-box {
@@ -65,11 +61,21 @@ st.markdown("""
         transform: scale(1.05);
     }
 
-    .footer {
+    footer, .css-164nlkn, .css-cio0dv {visibility: hidden;}  /* Remove Made with Streamlit */
+
+    .gear {
+        margin-top: 30px;
         text-align: center;
-        font-size: 12px;
-        color: #888;
-        padding-top: 20px;
+    }
+
+    .gear img {
+        width: 80px;
+        animation: rotate 2s linear infinite;
+    }
+
+    @keyframes rotate {
+        from {transform: rotate(0deg);}
+        to   {transform: rotate(360deg);}
     }
     </style>
 """, unsafe_allow_html=True)
@@ -82,7 +88,9 @@ st.markdown("---")
 # ---- Input Box ----
 with st.container():
     st.markdown('<div class="news-box">', unsafe_allow_html=True)
-    news_text = st.text_area("Paste your news article here 👇", height=200, placeholder="Type or paste your article...")
+    if 'news_text' not in st.session_state:
+        st.session_state['news_text'] = ""
+    news_text = st.text_area("Paste your news article here 👇", height=200, key="main_input", value=st.session_state['news_text'])
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---- Button Row ----
@@ -93,7 +101,7 @@ with col1:
         if news_text.strip() == "":
             st.warning("⚠️ Please enter some news text.")
         else:
-            with st.spinner("Analyzing..."):
+            with st.spinner("Analyzing with AI..."):
                 time.sleep(1.2)
                 input_vector = vectorizer.transform([news_text])
                 prediction = model.predict(input_vector)[0]
@@ -101,26 +109,19 @@ with col1:
                 st.error("❌ This news is likely FAKE.")
             else:
                 st.success("✅ This news is likely REAL.")
+            st.session_state['news_text'] = news_text
 
 with col2:
     if st.button("🧪 Example"):
-        st.session_state['example'] = "The Prime Minister announced a new health policy which will be implemented next month."
-        st.experimental_rerun()
+        st.session_state['news_text'] = "The Prime Minister announced a new health policy which will be implemented next month."
 
 with col3:
     if st.button("❌ Clear"):
-        st.session_state['example'] = ""
-        st.experimental_rerun()
+        st.session_state['news_text'] = ""
 
-# ---- Handle Example Text ----
-if 'example' in st.session_state:
-    news_text = st.session_state['example']
-    st.text_area("🧾 Example loaded:", news_text, height=200, disabled=True)
-
-# ---- Additional Animation Fill ----
+# ---- Gear Animation Footer ----
 st.markdown("""
-<div style='margin-top:40px; text-align:center;'>
-    <img src='https://media4.giphy.com/media/5GoVLqeAOo6PK/giphy.gif?cid=ecf05e47an2oblgto43wvpb2l0sxyli6j5f3rvyy0d6ypzev&ep=v1_gifs_search&rid=giphy.gif&ct=g' width='180'/>
-    <p style='font-size:13px;color:#aaa;'>Powered by Logistic Regression & TF-IDF • Real-time AI Detection</p>
+<div class="gear">
+    <img src="https://cdn-icons-png.flaticon.com/512/189/189792.png" alt="gear spinning"/>
 </div>
 """, unsafe_allow_html=True)
