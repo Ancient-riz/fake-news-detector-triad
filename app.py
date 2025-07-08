@@ -1,6 +1,7 @@
 import streamlit as st
 import pickle
 import time
+import random  # For random example news
 
 # Load model and vectorizer
 model = pickle.load(open("model.pkl", "rb"))
@@ -61,7 +62,7 @@ st.markdown("""
         transform: scale(1.05);
     }
 
-    footer, .css-164nlkn, .css-cio0dv {visibility: hidden;}  /* Remove Made with Streamlit */
+    footer, .css-164nlkn, .css-cio0dv {visibility: hidden;}
 
     .gear {
         margin-top: 30px;
@@ -93,6 +94,20 @@ with st.container():
     news_text = st.text_area("Paste your news article here 👇", height=200, key="main_input", value=st.session_state['news_text'])
     st.markdown('</div>', unsafe_allow_html=True)
 
+# ---- Example Set ----
+examples = [
+    "The government has launched a new scheme for free education.",
+    "Aliens were spotted near the White House last night!",
+    "COVID-19 vaccines cause people to become magnetic.",
+    "NASA confirms the moon is shrinking.",
+    "Chocolate is found to cure all types of cancer.",
+    "A new smartphone app can detect lies using AI.",
+    "Scientists discover water on Mars again.",
+    "The Earth will become uninhabitable in 5 years, say sources.",
+    "Eating pineapple cures the common cold.",
+    "The Prime Minister announced a new health policy which will be implemented next month."
+]
+
 # ---- Button Row ----
 col1, col2, col3 = st.columns(3)
 
@@ -113,7 +128,7 @@ with col1:
 
 with col2:
     if st.button("🧪 Example"):
-        st.session_state['news_text'] = "The Prime Minister announced a new health policy which will be implemented next month."
+        st.session_state['news_text'] = random.choice(examples)
 
 with col3:
     if st.button("❌ Clear"):
