@@ -1,1 +1,1 @@
-# fake-news-triad
+# Fake-News-Detector
